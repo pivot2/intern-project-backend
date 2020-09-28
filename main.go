@@ -1,6 +1,7 @@
 package main
 
 import (
+	"package/orders"
 	"package/products"
 	"package/users"
 
@@ -10,21 +11,26 @@ import (
 func main() {
 	r := gin.Default()
 	r.MaxMultipartMemory = 8 << 20
-	v1 := r.Group("/user")
+	g1 := r.Group("/user")
 	{
-		v1.GET("/", users.Endpoint1)
-		v1.GET("/:id", users.Endpoint2)
-		v1.POST("/login", users.LoginEndpoint)
-		v1.POST("/signup", users.SignUpEndpoint)
+		g1.GET("/", users.Endpoint1)
+		g1.GET("/:id", users.Endpoint2)
+		g1.POST("/login", users.LoginEndpoint)
+		g1.POST("/signup", users.SignUpEndpoint)
 	}
-	v2 := r.Group("/product")
+	g2 := r.Group("/product")
 	{
-		v2.POST("/add", products.AddProductEndpoint)
-		v2.GET("/:id", products.GetProductInfoRoute)
-	}
-	r.GET("/", func(c *gin.Context) {
-		c.File("./test.html")
-	})
+		g2.POST("/add", products.AddProductEndpoint)
+		g2.GET("/:id/admin", products.GetSellerProductInfoRoute)
+		//g2.GET("/show/:id", products.GetSellerProductInfoRoute)
+		g2.GET("/:id", products.GetProductInfoRoute)
+		g2.GET("/", products.GetAllProductInfoRoute)
 
-	r.Run(":3000")
+	}
+	g3 := r.Group("/order")
+	{
+		g3.GET("/:id", orders.GetSellerProductInfoRoute)
+		g3.POST("/add", orders.AddOrderEndpoint)
+	}
+	r.Run(":8080")
 }

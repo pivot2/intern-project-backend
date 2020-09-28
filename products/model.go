@@ -1,13 +1,15 @@
 package products
 
 import (
+	"fmt"
 	"package/db"
+	"strconv"
 
 	"github.com/lib/pq"
 )
 
 type Product struct {
-	ID          int            `db:"product_id" json:"id"`
+	Id          int            `db:"product_id" json:"id"`
 	SellerID    int            `db:"seller_id" json:"seller_id"`
 	Name        string         `db:"name" json:"name"`
 	Categories  pq.StringArray `db:"categories" json:"categories"`
@@ -35,9 +37,20 @@ func AddProduct(product Product) error {
 
 func GetProductInfo(id int) []Product {
 	product := []Product{}
-	db.Db.Select(&product, "Select * from product where product_id=1")
-	// if err := db.Db.Query("Select * from product where product_id=1").Scan(pq.Array(&product)); err != nil {
-	// 	log.Fatal(err)
-	// }
+	fmt.Println(id)
+	db.Db.Select(&product, "Select * from product where product_id="+strconv.Itoa(id))
+	return product
+}
+
+func GetAllProductInfo() []Product {
+	product := []Product{}
+	db.Db.Select(&product, "Select * from product")
+	return product
+}
+
+func GetAllProductofASeller(id int) []Product {
+	product := []Product{}
+	db.Db.Select(&product, "Select * from product where seller_id="+strconv.Itoa(id))
+	fmt.Println(product)
 	return product
 }
